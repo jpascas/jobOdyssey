@@ -12,13 +12,21 @@ const resolvers = {
     OFFERED: 'offered',
   },
   Query: {
+    currentUser: async (parent, { }, context) => {
+      console.log("currentUSER query!!")
+      console.log("context req user",context.getUser())
+      console.log("cookies ", context.req.cookies);
+      return context.getUser();
+    },
     hello: async (parent, { }, context) => {
       console.log("cookies ", context.req.cookies);
       // if user not authenticated return null and status 403
+      /*
       if (!context.getUser()){        
         context.res.status(403);
         return null;
       }
+      */
       return 'hello world!'
     },
     getAllUsers: async () => {

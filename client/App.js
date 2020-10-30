@@ -3,10 +3,32 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Provider as PaperProvider} from 'react-native-paper';
+import Constants from './env'
+
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { ApolloClient } from "apollo-client";
+import { HttpLink } from "apollo-link-http";
+import { ApolloProvider } from "react-apollo";
 
 import {AppTheme} from './src/theme';
 import {HomeScreen, LoginScreen, SignupScreen, JobApplication , SocialLogin} from './src/ui';
 
+/*
+const client = new ApolloClient({
+  uri: '${Constants.SERVER_URL}/graphql',
+  cache: new InMemoryCache(),
+  credentials: 'include',
+})*/
+
+const client = new ApolloClient({
+  // initialize cache
+  cache: new InMemoryCache(),
+  //Assign your link with a new instance of a HttpLink linking to your graphql server
+  link: new HttpLink({
+    uri: `${Constants.SERVER_URL}/graphql`
+  }),
+  credentials: 'include',
+});
 
 console.log("LoginScreen",LoginScreen)
 console.log("SocialLoginScreen",SocialLogin)
@@ -18,7 +40,8 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <PaperProvider theme={AppTheme}>
-      <NavigationContainer>
+      <ApolloProvider client={client}>
+        <NavigationContainer>
         <Stack.Navigator initialRouteName="SocialLogin">
           <Stack.Screen
             name="Login"
@@ -92,6 +115,7 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      </ApolloProvider>
     </PaperProvider>
   )
 }
